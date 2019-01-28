@@ -43,7 +43,6 @@ const routes = {
             console.log(id)
             return `/videos/${id}`;
         } else {
-            console.log('id 없음 긁적')
             return VIDEO_DETAIL;
         }
     },
