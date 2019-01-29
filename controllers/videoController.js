@@ -1,9 +1,17 @@
 // import { videos } from "../db";
 import routes from "../routes";
+import Video from "../models/Video"; //Database의 element가 아니라 이건 단지 model, element를 받는 통로일 뿐이지 element자체는 아니다.
 
-export const home = (req, res) => {
-
-    res.render("home", { pageTitle: "Home", videos });
+export const home = async(req, res) => {
+    try {
+        const videos = await Video.find({});
+            res.render("home", { pageTitle: "Home", videos });
+            console.log(videos)
+        } catch(error) {
+            console.log(error)
+            res.render("home", { pageTitle: "Home", videos : [] });
+    }
+    
 }
 
 export const search = (req, res) => {
@@ -18,12 +26,18 @@ export const search = (req, res) => {
 
 export const getUpload = (req, res) => res.render("upload", {pageTitle : "upload"});
 
-export const postUpload = (req, res) => {
-    const { 
-        body : { file, title, description }
-    } = req;
-    // To Do : Upload and Save Video
-    res.redirect(routes.videoDetail(5555555))
+export const postUpload = async (req, res) => {
+    const { body: { title, description }, file: { path } } = req;
+    //file 방식이 아닌 URL 방식으로
+    const newVideo = await Video.create(
+    {
+        fileUrl: path,
+        title,
+        description
+    }
+    );
+    console.log(newVideo);
+    res.redirect(routes.videoDetail(newVideo.id))
 }
 
 export const videoDetail = (req, res) => res.render("videoDetail", {pageTitle : "video Detail"});
